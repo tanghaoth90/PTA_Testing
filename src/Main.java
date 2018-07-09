@@ -11,21 +11,29 @@ public class Main {
 		in.read(b,0,b.length);
 		System.out.println(new String(b));
 	}
-	
+	/** 
+	 * java -jar runnable.jar [StudentJarName] [StudentJarDirectory] 
+	 * 		[AnalyzedCodeDirectory] [AnalyzedMainClass] [SafeRunningDirectory]
+	 */
 	public static void main(String[] args) throws IOException, InterruptedException {
 		// TODO catch throw exceptions
-		// TODO run all student projects
-		
+		// TODO run all student projects		
 		// TODO copy test cases and student projects to safe directories
 		// TODO clear the directories
-		String studentJarName = "pta-by-th.jar";
-		String studentJarDirectory = "/root/Desktop";
-		String studentJarFullName = studentJarDirectory + File.separator + studentJarName;
+		String studentJarName = args[0];
+		String studentJarPath = args[1];
+		String analyzedCodePath = args[2];
+		String analyzedMainClass = args[3];
+		String safeRunningDirectory = args[4]; // TODO deal with the case when the safe path is not '.'
+		String studentJarFullName = studentJarPath + File.separator + studentJarName;
 		
 		final Runtime re = Runtime.getRuntime();
-		re.exec("cp " + studentJarFullName + " .").waitFor();		
+		//new File(safeRunningDirectory).mkdirs();
+		// TODO using Files (Java 7) to copy and delete files
 		
-		String jarCommand = "java -jar " + studentJarName + " /root/workspace/code_original/ test.Hello";
+		re.exec("cp " + studentJarFullName + " " + safeRunningDirectory).waitFor();		
+		
+		String jarCommand = "java -jar " + studentJarName + " " + analyzedCodePath + " " + analyzedMainClass;
 		System.out.println(jarCommand);
 		Process studentProcess = re.exec(jarCommand);
 		//TODO set time out limit

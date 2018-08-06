@@ -37,7 +37,7 @@ with open("resources/benchmark_info.txt", "r") as benchmark_info_file:
 			runmsg = "Timeout"
 		except:
 			runmsg = "Fail"
-		if not os.path.isfile("result.txt"):
+		if runmsg == "Normal" and not os.path.isfile("result.txt"):
 			runmsg = "NoResult"
 		userAns = get_result("result.txt")
 		print("BM [%s] %s\n%s\n%s" % (abbr_benchmark_name, runmsg, str(stdAns), str(userAns)))

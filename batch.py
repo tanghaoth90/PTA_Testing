@@ -8,8 +8,7 @@ from collections import Counter
 import score_script
 
 def printFlush(s):
-	print(s)
-	sys.stdout.flush()
+	print(s, flush=True)
 
 if __name__ == "__main__":
 	pref = "/mnt/e/projects"

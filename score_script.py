@@ -45,7 +45,7 @@ def main():
 			if os.path.isfile("result.txt"): os.remove("result.txt")
 			runmsg = "Normal"
 			try:
-				subprocess.run(["java", "-jar", "analyzer.jar", "../resources/finaltest", benchmark_name], 
+				subprocess.check_call(["java", "-jar", "analyzer.jar", "../resources/finaltest", benchmark_name], 
 					timeout=benchmark_timeout, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 			except subprocess.TimeoutExpired:
 				runmsg = "Timeout"
@@ -56,8 +56,7 @@ def main():
 			userans = get_result("result.txt")
 			compare_stat = compare_answer(stdans, userans)
 			#print("BM [%s] %s\n%s\n%s\n%s" % (abbr_benchmark_name, runmsg, str(stdans), str(userans), str(compare_stat)))
-			print("[%s] %s %s %s %s" % (abbr_benchmark_name, runmsg, compare_stat[0], str(compare_stat[1]), str(compare_stat[2])))
-			sys.stdout.flush()
+			print("[%s] %s %s %s %s" % (abbr_benchmark_name, runmsg, compare_stat[0], str(compare_stat[1]), str(compare_stat[2])), flush=True)
 			test_logs.append((abbr_benchmark_name, runmsg, compare_stat[0], compare_stat[1], compare_stat[2]))
 	return test_logs
 

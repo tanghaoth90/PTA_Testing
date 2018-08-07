@@ -1,7 +1,7 @@
 # Author: Hao Tang
 # Python 3.x
 
-import subprocess, os
+import subprocess, os, sys
 
 def get_result(filename):
 	res = {}
@@ -32,26 +32,33 @@ def compare_answer(stdans, userans):
 			return ("unsound", user_p2o, std_p2o)
 	return ("sound", user_p2o, std_p2o)
 
-with open("resources/benchmark_info.txt", "r") as benchmark_info_file:
-	for benchmark_info in benchmark_info_file:
-		benchmark_info = benchmark_info.strip()
-		if not benchmark_info: continue
-		benchmark_name, benchmark_timeout = benchmark_info.split()
-		benchmark_timeout = int(benchmark_timeout)
-		abbr_benchmark_name = benchmark_name.split(".")[-1]
-		stdans = get_result("resources/standardAnswer/%s.stdout"%abbr_benchmark_name)
-		if os.path.isfile("result.txt"): os.remove("result.txt")
-		runmsg = "Normal"
-		try:
-			subprocess.run(["java", "-jar", "analyzer.jar", "resources/finaltest", benchmark_name], 
-				timeout=benchmark_timeout, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-		except subprocess.TimeoutExpired:
-			runmsg = "Timeout"
-		except:
-			runmsg = "Fail"
-		if runmsg == "Normal" and not os.path.isfile("result.txt"):
-			runmsg = "NoResult"
-		userans = get_result("result.txt")
-		compare_stat = compare_answer(stdans, userans)
-		#print("BM [%s] %s\n%s\n%s\n%s" % (abbr_benchmark_name, runmsg, str(stdans), str(userans), str(compare_stat)))
-		print("[%s] %s %s %s %s" % (abbr_benchmark_name, runmsg, compare_stat[0], str(compare_stat[1]), str(compare_stat[2])))
+def main():
+	test_logs = []
+	with open("../resources/benchmark_info.txt", "r") as benchmark_info_file:
+		for benchmark_info in benchmark_info_file:
+			benchmark_info = benchmark_info.strip()
+			if not benchmark_info: continue
+			benchmark_name, benchmark_timeout = benchmark_info.split()
+			benchmark_timeout = int(benchmark_timeout)
+			abbr_benchmark_name = benchmark_name.split(".")[-1]
+			stdans = get_result("../resources/standardAnswer/%s.stdout"%abbr_benchmark_name)
+			if os.path.isfile("result.txt"): os.remove("result.txt")
+			runmsg = "Normal"
+			try:
+				subprocess.run(["java", "-jar", "analyzer.jar", "../resources/finaltest", benchmark_name], 
+					timeout=benchmark_timeout, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+			except subprocess.TimeoutExpired:
+				runmsg = "Timeout"
+			except:
+				runmsg = "Fail"
+			if runmsg == "Normal" and not os.path.isfile("result.txt"):
+				runmsg = "NoResult"
+			userans = get_result("result.txt")
+			compare_stat = compare_answer(stdans, userans)
+			#print("BM [%s] %s\n%s\n%s\n%s" % (abbr_benchmark_name, runmsg, str(stdans), str(userans), str(compare_stat)))
+			print("[%s] %s %s %s %s" % (abbr_benchmark_name, runmsg, compare_stat[0], str(compare_stat[1]), str(compare_stat[2])))
+			sys.stdout.flush()
+			test_logs.append((abbr_benchmark_name, runmsg, compare_stat[0], compare_stat[1], compare_stat[2]))
+	return test_logs
+
+main()

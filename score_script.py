@@ -34,7 +34,7 @@ def compare_answer(stdans, userans):
 
 def main():
 	test_logs = []
-	with open("../resources/benchmark_info.txt", "r") as benchmark_info_file:
+	with open("../resources/benchmark_info_full.txt", "r") as benchmark_info_file:
 		for benchmark_info in benchmark_info_file:
 			benchmark_info = benchmark_info.strip()
 			if not benchmark_info: continue
@@ -61,4 +61,5 @@ def main():
 			test_logs.append((abbr_benchmark_name, runmsg, compare_stat[0], compare_stat[1], compare_stat[2]))
 	return test_logs
 
-main()
+if __name__ == "__main__":
+	main()

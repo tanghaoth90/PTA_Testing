@@ -32,20 +32,20 @@ def compare_answer(stdans, userans):
 			return ("unsound", user_p2o, std_p2o)
 	return ("sound", user_p2o, std_p2o)
 
-def main():
+def main(benchmark_info_file, stdans_dir, test_dir):
 	test_logs = []
-	with open("../resources/benchmark_info_full.txt", "r") as benchmark_info_file:
+	with open(benchmark_info_file, "r") as benchmark_info_file:
 		for benchmark_info in benchmark_info_file:
 			benchmark_info = benchmark_info.strip()
 			if not benchmark_info: continue
 			benchmark_name, benchmark_timeout = benchmark_info.split()
 			benchmark_timeout = int(benchmark_timeout)
 			abbr_benchmark_name = benchmark_name.split(".")[-1]
-			stdans = get_result("../resources/standardAnswer/%s.stdout"%abbr_benchmark_name)
+			stdans = get_result(stdans_dir+"/%s.stdout"%abbr_benchmark_name)
 			if os.path.isfile("result.txt"): os.remove("result.txt")
 			runmsg = "Normal"
 			try:
-				subprocess.check_call(["java", "-jar", "analyzer.jar", "../resources/finaltest", benchmark_name], 
+				subprocess.check_call(["java", "-jar", "analyzer.jar", test_dir, benchmark_name], 
 					timeout=benchmark_timeout, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 			except subprocess.TimeoutExpired:
 				runmsg = "Timeout"
@@ -61,4 +61,4 @@ def main():
 	return test_logs
 
 if __name__ == "__main__":
-	main()
+	main(sys.argv[1], sys.argv[2], sys.argv[3])

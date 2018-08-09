@@ -11,3 +11,6 @@ run_batch:
 
 run_check_identical:
 	python3 check_indentical.py $(PROJ_DIR)
+
+clean:
+	rm -rf score.csv analyzer.jar sootOutput/ __pycache__

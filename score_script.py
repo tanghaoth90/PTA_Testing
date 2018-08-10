@@ -1,7 +1,7 @@
 # Author: Hao Tang
 # Python 3.x
 
-import subprocess, os, sys
+import subprocess, os, sys, time
 
 def get_result(filename):
 	res = {}
@@ -44,6 +44,7 @@ def main(benchmark_info_file, stdans_dir, test_dir):
 			stdans = get_result(stdans_dir+"/%s.stdout"%abbr_benchmark_name)
 			if os.path.isfile("result.txt"): os.remove("result.txt")
 			runmsg = "Normal"
+			start = time.time()
 			try:
 				subprocess.check_call(["java", "-jar", "analyzer.jar", test_dir, benchmark_name], 
 					timeout=benchmark_timeout, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -51,13 +52,14 @@ def main(benchmark_info_file, stdans_dir, test_dir):
 				runmsg = "Timeout"
 			except:
 				runmsg = "Fail"
+			elapsed = int(time.time() - start)
 			if runmsg == "Normal" and not os.path.isfile("result.txt"):
 				runmsg = "NoResult"
 			userans = get_result("result.txt")
 			compare_stat = compare_answer(stdans, userans)
 			#print("BM [%s] %s\n%s\n%s\n%s" % (abbr_benchmark_name, runmsg, str(stdans), str(userans), str(compare_stat)))
-			print("[%s] %s %s %s %s" % (abbr_benchmark_name, runmsg, compare_stat[0], str(compare_stat[1]), str(compare_stat[2])), flush=True)
-			test_logs.append((abbr_benchmark_name, runmsg, compare_stat[0], compare_stat[1], compare_stat[2]))
+			print("[%s] %s %s %s %s, %d seconds" % (abbr_benchmark_name, runmsg, compare_stat[0], str(compare_stat[1]), str(compare_stat[2]), elapsed), flush=True)
+			test_logs.append((abbr_benchmark_name, runmsg, compare_stat[0], compare_stat[1], compare_stat[2], elapsed))
 	return test_logs
 
 if __name__ == "__main__":

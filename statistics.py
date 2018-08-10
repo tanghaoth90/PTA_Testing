@@ -11,7 +11,7 @@ def clean_repr(scorerow):
 		return tuple(scorerow[3:4])
 	if scorerow[4] == "unsound":
 		return tuple(scorerow[3:5])
-	return tuple(scorerow[3:])
+	return tuple(scorerow[3:7])
 
 def print_counter(c):
 	for e in c:
@@ -23,7 +23,7 @@ if __name__ == "__main__":
 		scorerows = [scorerow[:] for scorerow in csvreader]
 		benchmarks = set([scorerow[2] for scorerow in scorerows])
 		csvwriter = csv.writer(statistics_csv)
-		csvwriter.writerow(['项目数','正常运行','正确','精确','不精确','报错','超时','无结果'])
+		csvwriter.writerow(['项目名','项目数','正常运行','正确','精确','不精确','报错','超时','无结果'])
 		for benchmark in benchmarks:
 			print("Subject \""+benchmark+"\": ")
 			homeworks = [[int(scorerow[0])]+scorerow[1:5]+[int(scorerow[5]),int(scorerow[6])] for scorerow in scorerows if scorerow[2]==benchmark]
@@ -36,10 +36,9 @@ if __name__ == "__main__":
 			print("  Among %d normal projects, %d projects return sound results, and %d is unsound;" % (ft(0,'Normal'), ft(1,'sound'), ft(0,'Normal')-ft(1,'sound')))
 			soundkeys = sorted([e for e in judge_statistics if len(e)==4])
 			correct_answer = [scorerow[6] for scorerow in homeworks][0]
-			correct_answer = 10
 			print("  The correct answer contains %d points-to relationships, while " % correct_answer, end="")
 			print(", ".join(["%d projects return %d" % (judge_statistics[e], e[2]) for e in soundkeys]), end=".\n\n")
-			csvwriter.writerow([len(homeworks), ft(0,'Normal'), ft(1,'sound'), 
+			csvwriter.writerow([benchmark, len(homeworks), ft(0,'Normal'), ft(1,'sound'), 
 				"%d(%d)"%(judge_statistics[('Normal','sound',correct_answer,correct_answer)],correct_answer),
 				";".join([("%d(%d)"%(judge_statistics[e],e[2])) for e in soundkeys if e[2] != correct_answer]),
 				ft(0,'Fail'),ft(0,'Timeout'), ft(0,'NoResult')])

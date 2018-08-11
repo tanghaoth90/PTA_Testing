@@ -16,7 +16,7 @@ run_check_identical:
 	python3 check_indentical.py $(PROJ_DIR)
 
 run_statistics:
-	python3 statistics.py
+	python3 statistics.py | tee -a batch.log
 
 run_full_test: run_batch run_statistics
 	rm -rf $(LOG_DIR)
